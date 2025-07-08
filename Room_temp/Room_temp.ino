@@ -16,10 +16,19 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int buttonState;
 
+void blinkLED() {
+  digitalWrite(13, HIGH);
+  delay(100);
+  digitalWrite(13, LOW);
+  delay(100);
+}
+
 void setup() {
   Serial.begin(9600);
 
   pinMode(buttonPin, INPUT_PULLUP);
+
+  pinMode(13, OUTPUT);
 
   // Initialize the DHT sensor
   dht.begin();
@@ -41,31 +50,35 @@ void setup() {
 }
 
 void loop() {
-  // Read temperature and humidity
+
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
   buttonState = digitalRead(buttonPin);
 
-  // Check if any reads failed and exit early (to try again).
   if (isnan(temperature) || isnan(humidity)) {
     Serial.println("Failed to read from DHT sensor!");
     delay(delayTime);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Temp: Error");
+    lcd.setCursor(0, 1);
+    lcd.print("Humid: Error");
+    blinkLED();
     return;
   }
 
-  // Print the values to the Serial Monitor
   Serial.print("Temperature: "); Serial.print(temperature); Serial.println(" °C");
   
   Serial.print("Humidity: "); Serial.print(humidity); Serial.println(" %");
 
   Serial.print("Button state: "); Serial.println(buttonState);
-  // Display on LCD
+
   lcd.setCursor(0, 0);
   lcd.print("Temp: " + String(temperature) + " " + char(223) + "C");
   
   lcd.setCursor(0, 1);
   lcd.print("Humid: " + String(humidity) + " %");
 
-  delay(delayTime); // Wait a few seconds between readings
+  delay(delayTime);
 }
