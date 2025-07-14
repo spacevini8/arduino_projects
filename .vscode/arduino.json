@@ -1,5 +1,5 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "Nuke\\Nuke.ino",
+    "sketch": "Room_temp\\Room_temp.ino",
     "port": "COM5"
 }
