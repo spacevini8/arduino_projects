@@ -4,9 +4,10 @@
 #include <DHT_U.h>
 
 int DHTPIN = 8;
+int thermistorPin = A0; // Thermistor pin
 int buttonPin = 7;
 
-int delayTime = 250;
+int delayTime = 500;
 
 DHT dht (DHTPIN,DHT11);
 
@@ -51,7 +52,16 @@ void setup() {
 
 void loop() {
 
-  float temperature = dht.readTemperature();
+  float tempDHT = dht.readTemperature();
+  int tempThermistorinit = analogRead(thermistorPin);
+
+  double tempK = log(10000.0 * ((1024.0 / tempThermistorinit - 1)));
+  tempK = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * tempK * tempK )) * tempK );
+  float tempC = tempK - 273.15;
+
+  //float temperature = dht.readTemperature();
+
+  float temperature = (tempDHT + tempC) / 2; // Average temperature from DHT and thermistor
   float humidity = dht.readHumidity();
 
   buttonState = digitalRead(buttonPin);
@@ -69,6 +79,8 @@ void loop() {
   }
 
   Serial.print("Temperature: "); Serial.print(temperature); Serial.println(" °C");
+  Serial.print("TemperatureDHT: "); Serial.print(tempDHT); Serial.println(" °C");
+  Serial.print("TemperatureThermistor: "); Serial.print(tempC); Serial.println(" °C");
   
   Serial.print("Humidity: "); Serial.print(humidity); Serial.println(" %");
 
