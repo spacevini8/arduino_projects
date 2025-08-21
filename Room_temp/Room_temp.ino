@@ -4,10 +4,12 @@
 #include <DHT_U.h>
 
 int DHTPIN = 8;
-int thermistorPin = A0; // Thermistor pin
+int LM35pin = A1; // Thermistor pin
 int buttonPin = 7;
 
 int delayTime = 500;
+
+int TempLM35;
 
 DHT dht (DHTPIN,DHT11);
 
@@ -63,7 +65,13 @@ void loop() {
 
   */
 
-  float temperature = dht.readTemperature();
+  int valLM35 = analogRead(LM35pin);
+
+  TempLM35=(500 * valLM35) /1024;
+
+  float tempDHT = dht.readTemperature();
+
+  float temperature = (TempLM35 + tempDHT) / 2; // Average temperature from LM35 and DHT sensor
 
   //float temperature = (tempDHT + tempC) / 2; // Average temperature from DHT and thermistor
   float humidity = dht.readHumidity();
