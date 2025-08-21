@@ -65,9 +65,9 @@ void loop() {
 
   */
 
-  int valLM35 = analogRead(LM35pin);
+  float valLM35 = analogRead(LM35pin);
 
-  TempLM35=(500 * valLM35) /1024;
+  float TempLM35 =(500 * valLM35) /1024;
 
   float tempDHT = dht.readTemperature();
 
